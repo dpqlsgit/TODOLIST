@@ -1,0 +1,52 @@
+body {
+  /* body에는 기본 margin : 8px존재 */
+  margin: 0;
+  background-image: url("/image/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.container {
+  background-color: white;
+  /* 화면에 꽉 차게 보이게끔 높이 설정
+    vh: 내가 보는 화면의 높이 만큼 view height
+  */
+  min-height: 100vh;
+  /* box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset; */
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.task-area {
+  border: 1px solid violet;
+}
+
+/* tabs요소들 가로 정렬 */
+.task-tabs {
+  display:flex;
+  border-bottom: 1px solid violet;
+  position: relative;
+}
+
+/* tabs요소들 공간 주기 */
+.task-tabs div {
+  padding: 1em;
+}
+
+/* 움직임 때문에 자바스크립트에서 많이 쓰여서 id값 부여 */
+#under-line {
+  height: 4px;
+  background-color: cornflowerblue;
+  position:absolute;
+  width: 70px;
+  left : 0px;
+  top: 52px;
+  /* div태그 기본 padding값 없애기 */
+  padding: 0px;
+}
+
+.task {
+  display: flex;
+  /* 자식 div태그들을 양 끝으로 정렬 */
+  justify-content: space-between;
+  padding: 1em;
+}
