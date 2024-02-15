@@ -13,12 +13,44 @@ let taskInput = document.getElementById('task-input')
 let addButton = document.getElementById('add-button')
 let checkButton = document.getElementById('check-button')
 let taskList = [];
+let deleteAllButton = document.getElementById('delete-all')
+// let proceedingTab = document.getElementById('proceeding')
+// let completeTab = document.getElementById('complete')
+// let copyTaskList = []
+
+//querySelectorAll -> 해당 조건에 만족하는 모든 태그 가져옴
+//메뉴들
+let tabs = document.querySelectorAll('.task-tabs div')
+//초기값은 모두니까
+let mode = "all"
+let filterList = []
+// let list = []
+
+let underLine = document.getElementById('under-line')
+
+//0번째 div태그(under-line)은 필요 없기때문에 1부터 시작
+for(let i=1; tabs.length >i; i++) {
+  tabs[i].addEventListener('click',function(event){
+    filter(event)
+  })
+}
 
 addButton.addEventListener('click',addTask)
+deleteAllButton.addEventListener('click', deleteAll)
+// proceedingTab.addEventListener('click', proceeding)
+// completeTab.addEventListener('click', complete)
+
+//enter로 할 일 추가
+taskInput.addEventListener('keyup', function(){
+  if(window.event.keyCode === 13) {
+    addTask()
+  }
+})
 
 function addTask() {
   //할일 input에 아무 내용이 없으면 추가되지 않도록 막음
   if(!taskInput.value) {
+    alert('할 일을 입력해주세요!!')
     return;
   }
   // let taskContent = taskInput.value
@@ -42,14 +74,27 @@ function addTask() {
 
 /* taskList를 그려줌 / check-button 클릭 이벤트 ui도 여기서 처리 */
 function render() {
+  let list = []
+  //1. 내가 선택한 탭에 따라서
+  if(mode === "all") {
+    //all taskList
+    list = taskList
+  } else if(mode === 'ongoing' || mode === 'done') {
+    //ongoing, done filterList
+    list = filterList
+  }
+  //2. 리스트를 달리 보여준다
+  // all taskList
+  // ongoing, done filterList
   let resultHTML = '';
-  for(let i=0; taskList.length > i;i++) {
-    if(taskList[i].isComplete) {
-      resultHTML += `<div class="task">
-      <div class="task-done">${taskList[i].taskContent}</div>
+  for(let i=0; list.length > i;i++) {
+    if(list[i].isComplete) {
+      resultHTML += `
+      <div class="task">
+      <div class="task-done">${list[i].taskContent}</div>
       <div>
-        <button onclick="toggleComplete('${taskList[i].id}')">check</button>
-        <button onclick="deleteTask('${taskList[i].id}')">delete</button>
+        <button onclick="toggleComplete('${list[i].id}')">check</button>
+        <button onclick="deleteTask('${list[i].id}')">delete</button>
       </div>
       </div>`
     } else {
@@ -73,11 +118,12 @@ function render() {
       // onclick / addEventListener (차이점 있음)
       
       // 버튼이 생기는 순간 onclick이벤트도 같이 생성됨
-      resultHTML += `<div class="task">
-      <div>${taskList[i].taskContent}</div>
+      resultHTML += `
+      <div class="task">
+      <div>${list[i].taskContent}</div>
       <div>
-        <button onclick="toggleComplete('${taskList[i].id}')">check</button>
-        <button onclick="deleteTask('${taskList[i].id}')">delete</button>
+        <button onclick="toggleComplete('${list[i].id}')">check</button>
+        <button onclick="deleteTask('${list[i].id}')">delete</button>
       </div>
       </div>`
     }
@@ -103,18 +149,89 @@ function toggleComplete(id) {
 }
 
 function deleteTask(id) {
-  for(let i=0; taskList.length > i; i++) {
-    if(taskList[i].id == id) {
-      //선택된 행의 id값과 같은 id값을 가진
-      // index에 위치한 taskList 행을 삭제한다
-      taskList.splice(i,1)
-      break;
-      //맨처음에 taskList[i].splice이렇게 작성했을때 에러났는데 
-      //이러면 객체에 배열 메소드(splice)를 적용하는 경우이기 때문에
-      //말이 안된다
-    }
+  // let deleteList = []
+  if(filterList.length > 0) {
+    list = filterList
+  } else {
+    list = taskList
+  }
+  for(let i=0; list.length > i; i++) {
+    // if(deleteList[i].id == id) {
+      if(list[i].id == id) {
+        //선택된 행의 id값과 같은 id값을 가진
+        // index에 위치한 taskList 행을 삭제한다
+        list.splice(i,1)
+        break;
+        //맨처음에 taskList[i].splice이렇게 작성했을때 에러났는데 
+        //이러면 객체에 배열 메소드(splice)를 적용하는 경우이기 때문에
+        //말이 안된다
+      }
+    // }
   }
   render()
+}
+
+// function proceeding() {
+//   let proceedingList = []
+//   for(let i=0; taskList.length > i;i++) {
+//     if(!taskList[i].isComplete) {
+//       proceedingList.push(taskList[i])
+//     }
+//   }
+//   taskList = proceedingList
+//   render();
+// }
+
+// function complete() {
+//   let completeList = []
+//   for(let i=0; taskList.length > i; i++) {
+//     if(taskList[i].isComplete) {
+//       completeList.push(taskList[i])
+//     }
+//   }
+//   taskList = completeList
+//   render();
+// }
+
+//전체 삭제
+function deleteAll() {
+  if(taskList.length > 0) {
+    taskList = [];
+    render();
+  }
+}
+
+//event로 내가 클릭한 tab정보를 알 수 있음
+function filter(event) {
+  filterList = []
+  mode = event.target.id
+  //event에 내가 선택한 target / id값만 필요
+  // console.log('filter', event.target.id)
+  if(mode == 'all') {
+    //전체 리스트를 보여준다
+    render();
+  } else if(mode == 'ongoing') {
+    //진행중인 아이템을 보여준다
+    //task.isComplete = false
+    for(let i=0; taskList.length > i;i++) {
+      if(!taskList[i].isComplete) {
+        filterList.push(taskList[i])
+      }
+    }
+    render();
+  } else if(mode == 'done'){
+    //끝나는 케이스
+    //task.isComplete = true
+    for(let i=0; taskList.length >i; i++) {
+      if(taskList[i].isComplete) {
+        filterList.push(taskList[i])
+      }
+    }
+    render();
+  }
+  underLine.style.left = event.currentTarget.offsetLeft + 'px' // x좌표
+  underLine.style.width = event.currentTarget.offsetWidth + 'px' // width
+  underLine.style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px' // y좌표
 }
 
 function randomIDGenerate() {

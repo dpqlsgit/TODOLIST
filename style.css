@@ -31,6 +31,8 @@ body {
 /* tabs요소들 공간 주기 */
 .task-tabs div {
   padding: 1em;
+  /* cursor */
+  cursor: pointer;
 }
 
 /* 움직임 때문에 자바스크립트에서 많이 쓰여서 id값 부여 */
@@ -43,6 +45,7 @@ body {
   top: 52px;
   /* div태그 기본 padding값 없애기 */
   padding: 0px;
+  transition : 0.5s
 }
 
 .task {
