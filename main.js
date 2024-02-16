@@ -14,6 +14,7 @@ let addButton = document.getElementById('add-button')
 let checkButton = document.getElementById('check-button')
 let taskList = [];
 let deleteAllButton = document.getElementById('delete-all')
+let doneAllButton = document.getElementById('done-all')
 // let proceedingTab = document.getElementById('proceeding')
 // let completeTab = document.getElementById('complete')
 // let copyTaskList = []
@@ -37,6 +38,7 @@ for(let i=1; tabs.length >i; i++) {
 
 addButton.addEventListener('click',addTask)
 deleteAllButton.addEventListener('click', deleteAll)
+doneAllButton.addEventListener('click', doneAll)
 // proceedingTab.addEventListener('click', proceeding)
 // completeTab.addEventListener('click', complete)
 
@@ -92,9 +94,9 @@ function render() {
       resultHTML += `
       <div class="task">
       <div class="task-done">${list[i].taskContent}</div>
-      <div>
-        <button onclick="toggleComplete('${list[i].id}')">check</button>
-        <button onclick="deleteTask('${list[i].id}')">delete</button>
+      <div class="button-box">
+        <button onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-square-check"></i></button>
+        <button onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-eraser"></i></button>
       </div>
       </div>`
     } else {
@@ -121,9 +123,9 @@ function render() {
       resultHTML += `
       <div class="task">
       <div>${list[i].taskContent}</div>
-      <div>
-        <button onclick="toggleComplete('${list[i].id}')">check</button>
-        <button onclick="deleteTask('${list[i].id}')">delete</button>
+      <div class="button-box">
+        <button onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-square-check"></i></button>
+        <button onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-eraser"></i></button>
       </div>
       </div>`
     }
@@ -149,18 +151,12 @@ function toggleComplete(id) {
 }
 
 function deleteTask(id) {
-  // let deleteList = []
-  if(filterList.length > 0) {
-    list = filterList
-  } else {
-    list = taskList
-  }
-  for(let i=0; list.length > i; i++) {
+  for(let i=0; taskList.length > i; i++) {
     // if(deleteList[i].id == id) {
-      if(list[i].id == id) {
+      if(taskList[i].id == id) {
         //선택된 행의 id값과 같은 id값을 가진
         // index에 위치한 taskList 행을 삭제한다
-        list.splice(i,1)
+        taskList.splice(i,1)
         break;
         //맨처음에 taskList[i].splice이렇게 작성했을때 에러났는데 
         //이러면 객체에 배열 메소드(splice)를 적용하는 경우이기 때문에
@@ -168,7 +164,7 @@ function deleteTask(id) {
       }
     // }
   }
-  render()
+  filter()
 }
 
 // function proceeding() {
@@ -197,20 +193,39 @@ function deleteTask(id) {
 function deleteAll() {
   if(taskList.length > 0) {
     taskList = [];
-    render();
+    filter();
   }
+}
+
+function doneAll() {
+  if(taskList.length > 0) {
+    for(let i=0; taskList.length > i; i++) {
+      taskList[i].isComplete =true
+    }
+  }
+  render();
 }
 
 //event로 내가 클릭한 tab정보를 알 수 있음
 function filter(event) {
+  if(event) {
+    mode = event.target.id
+    underLine.style.left = event.currentTarget.offsetLeft + 'px' // x좌표
+    underLine.style.width = event.currentTarget.offsetWidth + 'px' // width
+    underLine.style.top = 
+    // event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px' // y좌표
+    event.target.offsetTop + (event.target.offsetHeight - 4) + "px";
+  }
+
   filterList = []
-  mode = event.target.id
   //event에 내가 선택한 target / id값만 필요
   // console.log('filter', event.target.id)
-  if(mode == 'all') {
-    //전체 리스트를 보여준다
-    render();
-  } else if(mode == 'ongoing') {
+  // if(mode == 'all') {
+  //   //전체 리스트를 보여준다
+  //   render();
+  // } 
+  
+  if(mode == 'ongoing') {
     //진행중인 아이템을 보여준다
     //task.isComplete = false
     for(let i=0; taskList.length > i;i++) {
@@ -218,7 +233,6 @@ function filter(event) {
         filterList.push(taskList[i])
       }
     }
-    render();
   } else if(mode == 'done'){
     //끝나는 케이스
     //task.isComplete = true
@@ -227,11 +241,8 @@ function filter(event) {
         filterList.push(taskList[i])
       }
     }
-    render();
   }
-  underLine.style.left = event.currentTarget.offsetLeft + 'px' // x좌표
-  underLine.style.width = event.currentTarget.offsetWidth + 'px' // width
-  underLine.style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px' // y좌표
+  render();
 }
 
 function randomIDGenerate() {
