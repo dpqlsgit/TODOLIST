@@ -92,8 +92,8 @@ function render() {
   for(let i=0; list.length > i;i++) {
     if(list[i].isComplete) {
       resultHTML += `
-      <div class="task">
-      <div class="task-done">${list[i].taskContent}</div>
+      <div class="task task-done">
+      <span class="">${list[i].taskContent}</span>
       <div class="button-box">
         <button onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-square-check"></i></button>
         <button onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-eraser"></i></button>
@@ -122,7 +122,7 @@ function render() {
       // 버튼이 생기는 순간 onclick이벤트도 같이 생성됨
       resultHTML += `
       <div class="task">
-      <div>${list[i].taskContent}</div>
+      <span>${list[i].taskContent}</span>
       <div class="button-box">
         <button onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-square-check"></i></button>
         <button onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-eraser"></i></button>
@@ -147,7 +147,7 @@ function toggleComplete(id) {
     }
   }
   //이 함수를 호출해야 위에 적용한 ui적 요소 적용
-  render()
+  filter()
 }
 
 function deleteTask(id) {
